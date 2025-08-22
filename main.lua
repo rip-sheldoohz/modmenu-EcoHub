@@ -1,17 +1,14 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
--- Serviços necessários
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 local UserInputService = game:GetService("UserInputService")
 
--- Variáveis do jogador
 local player = Players.LocalPlayer
 local humanoid
 local humanoidRootPart = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
 
--- Função para pegar humanoid atual do player
 local function getHumanoid()
     local char = player.Character or player.CharacterAdded:Wait()
     return char:WaitForChild("Humanoid")
@@ -19,9 +16,8 @@ end
 
 humanoid = getHumanoid()
 
--- Criação da Janela
 local Window = Rayfield:CreateWindow({
-   Name = "Eco Hub By rip_sheldoohz",
+   Name = "modmenu - EcoHub",
    Icon = 0,
    LoadingTitle = "Eco Hub",
    LoadingSubtitle = "by rip_sheldoohz",
@@ -56,10 +52,6 @@ local Window = Rayfield:CreateWindow({
    }
 })
 
--- ============================================================================
--- ABA BROOKHAVEN RP
--- ============================================================================
-
 local BrookhavenRPTab = Window:CreateTab("Brookhaven 🏡 RP")
 
 BrookhavenRPTab:CreateParagraph({
@@ -67,18 +59,13 @@ BrookhavenRPTab:CreateParagraph({
     Content = "Use os botões abaixo para ativar as funções do Brookhaven"
 })
 
--- ============================================================================
--- SISTEMA FLY
--- ============================================================================
-
 local humanoidRootPart
 local flyAtivo = false
-local flySpeed = 100 -- mais forte por padrão
+local flySpeed = 100
 local bodyVelocity
 local bodyGyro
 local moveDir = Vector3.new(0,0,0)
 
--- Atualizar HumanoidRootPart quando personagem spawna
 player.CharacterAdded:Connect(function(char)
     humanoidRootPart = char:WaitForChild("HumanoidRootPart")
 end)
@@ -86,16 +73,15 @@ if player.Character then
     humanoidRootPart = player.Character:WaitForChild("HumanoidRootPart")
 end
 
--- Detecta entrada de teclas
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
     if gameProcessed or not flyAtivo then return end
     if input.UserInputType == Enum.UserInputType.Keyboard then
-        if input.KeyCode == Enum.KeyCode.W then moveDir = moveDir + Vector3.new(0,0,1) end -- frente
-        if input.KeyCode == Enum.KeyCode.S then moveDir = moveDir + Vector3.new(0,0,-1) end -- trás
-        if input.KeyCode == Enum.KeyCode.A then moveDir = moveDir + Vector3.new(-1,0,0) end -- esquerda
-        if input.KeyCode == Enum.KeyCode.D then moveDir = moveDir + Vector3.new(1,0,0) end -- direita
-        if input.KeyCode == Enum.KeyCode.Space then moveDir = moveDir + Vector3.new(0,1,0) end -- cima
-        if input.KeyCode == Enum.KeyCode.LeftControl then moveDir = moveDir + Vector3.new(0,-1,0) end -- baixo
+        if input.KeyCode == Enum.KeyCode.W then moveDir = moveDir + Vector3.new(0,0,1) end
+        if input.KeyCode == Enum.KeyCode.S then moveDir = moveDir + Vector3.new(0,0,-1) end
+        if input.KeyCode == Enum.KeyCode.A then moveDir = moveDir + Vector3.new(-1,0,0) end
+        if input.KeyCode == Enum.KeyCode.D then moveDir = moveDir + Vector3.new(1,0,0) end
+        if input.KeyCode == Enum.KeyCode.Space then moveDir = moveDir + Vector3.new(0,1,0) end
+        if input.KeyCode == Enum.KeyCode.LeftControl then moveDir = moveDir + Vector3.new(0,-1,0) end
     end
 end)
 
@@ -111,7 +97,6 @@ UserInputService.InputEnded:Connect(function(input, gameProcessed)
     end
 end)
 
--- Função para ativar/desativar fly
 local function ativarFly(Value)
     flyAtivo = Value
     local char = player.Character
@@ -121,7 +106,7 @@ local function ativarFly(Value)
         print("Fly ativado - Voando com tudo (carro/carrinho incluso) 🚀")
 
         bodyVelocity = Instance.new("BodyVelocity")
-        bodyVelocity.MaxForce = Vector3.new(1e9,1e9,1e9) -- muito mais forte
+        bodyVelocity.MaxForce = Vector3.new(1e9,1e9,1e9)
         bodyVelocity.Velocity = Vector3.new(0,0,0)
         bodyVelocity.Parent = humanoidRootPart
 
@@ -138,7 +123,6 @@ local function ativarFly(Value)
     end
 end
 
--- Atualiza movimento do Fly
 RunService.RenderStepped:Connect(function()
     if flyAtivo and humanoidRootPart and bodyVelocity and bodyGyro then
         local cam = workspace.CurrentCamera
@@ -155,7 +139,6 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
--- Toggle Fly no menu
 BrookhavenRPTab:CreateToggle({
     Name = "Ativar Fly",
     CurrentValue = false,
@@ -163,7 +146,6 @@ BrookhavenRPTab:CreateToggle({
     Callback = ativarFly
 })
 
--- Slider de velocidade
 BrookhavenRPTab:CreateSlider({
     Name = "Velocidade do Fly",
     Range = {10, 500},
@@ -177,26 +159,19 @@ BrookhavenRPTab:CreateSlider({
     end,
 })
 
--- ============================================================================
--- SISTEMA NOCLIP
--- ============================================================================
-
 local noclipAtivo = false
 local noclipConnection = nil
 
--- Função para aplicar noclip em todas as partes do personagem
 local function aplicarNoclip()
     local character = player.Character
     if not character then return end
     
-    -- Aplica noclip em todas as BaseParts do personagem
     for _, part in pairs(character:GetChildren()) do
         if part:IsA("BasePart") then
             part.CanCollide = false
         end
     end
     
-    -- Também aplica em acessórios e outras partes que podem ser adicionadas
     for _, descendant in pairs(character:GetDescendants()) do
         if descendant:IsA("BasePart") then
             descendant.CanCollide = false
@@ -204,15 +179,12 @@ local function aplicarNoclip()
     end
 end
 
--- Função para remover noclip de todas as partes do personagem
 local function removerNoclip()
     local character = player.Character
     if not character then return end
     
-    -- Remove noclip de todas as BaseParts do personagem
     for _, part in pairs(character:GetChildren()) do
         if part:IsA("BasePart") then
-            -- HumanoidRootPart sempre deve ter CanCollide = false para evitar bugs
             if part.Name == "HumanoidRootPart" then
                 part.CanCollide = false
             else
@@ -221,7 +193,6 @@ local function removerNoclip()
         end
     end
     
-    -- Também remove de acessórios e outras partes
     for _, descendant in pairs(character:GetDescendants()) do
         if descendant:IsA("BasePart") then
             if descendant.Name == "HumanoidRootPart" then
@@ -233,7 +204,6 @@ local function removerNoclip()
     end
 end
 
--- Toggle Noclip
 BrookhavenRPTab:CreateToggle({
     Name = "Ativar Noclip",
     CurrentValue = false,
@@ -244,7 +214,6 @@ BrookhavenRPTab:CreateToggle({
         if Value then
             print("Noclip ativado - Você pode atravessar paredes!")
             
-            -- Criar conexão para manter noclip ativo
             if noclipConnection then
                 noclipConnection:Disconnect()
             end
@@ -256,7 +225,6 @@ BrookhavenRPTab:CreateToggle({
         else
             print("Noclip desativado - Colisão normal restaurada")
             
-            -- Desconectar e remover noclip
             if noclipConnection then
                 noclipConnection:Disconnect()
                 noclipConnection = nil
@@ -265,7 +233,6 @@ BrookhavenRPTab:CreateToggle({
             removerNoclip()
         end
         
-        -- Aplicar imediatamente
         if noclipAtivo then
             aplicarNoclip()
         else
@@ -274,12 +241,10 @@ BrookhavenRPTab:CreateToggle({
     end,
 })
 
--- Função para aplicar noclip em novos acessórios/partes adicionadas
 local function onChildAdded(child)
     if noclipAtivo and child:IsA("BasePart") then
         child.CanCollide = false
     elseif noclipAtivo and child:IsA("Accessory") then
-        -- Aguardar Handle carregar se for um acessório
         local handle = child:WaitForChild("Handle", 5)
         if handle then
             handle.CanCollide = false
@@ -287,18 +252,15 @@ local function onChildAdded(child)
     end
 end
 
--- Garantir que noclip seja aplicado quando personagem respawna
 player.CharacterAdded:Connect(function(character)
-    -- Aguardar personagem carregar completamente
     character:WaitForChild("HumanoidRootPart")
-    wait(1) -- Pequena pausa para garantir que tudo carregou
+    wait(1)
     
     if noclipAtivo then
         print("Reaplicando noclip após respawn")
         aplicarNoclip()
     end
     
-    -- Conectar eventos para novas partes adicionadas
     character.ChildAdded:Connect(onChildAdded)
     character.DescendantAdded:Connect(function(descendant)
         if noclipAtivo and descendant:IsA("BasePart") then
@@ -307,7 +269,6 @@ player.CharacterAdded:Connect(function(character)
     end)
 end)
 
--- Se já há um personagem, conectar os eventos
 if player.Character then
     player.Character.ChildAdded:Connect(onChildAdded)
     player.Character.DescendantAdded:Connect(function(descendant)
@@ -317,15 +278,10 @@ if player.Character then
     end)
 end
 
--- ============================================================================
--- SISTEMA DE SUPER PULO
--- ============================================================================
-
 local superPuloAtivo = false
-local jumpPowerOriginal = 50 -- padrão Roblox
-local jumpPowerAtual = 150 -- valor inicial do super pulo
+local jumpPowerOriginal = 50
+local jumpPowerAtual = 150
 
--- Função para ativar/desativar Super Pulo
 local function atualizarSuperPulo(Value)
     superPuloAtivo = Value
     local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
@@ -338,7 +294,6 @@ local function atualizarSuperPulo(Value)
     end
 end
 
--- Atualiza humanoid ao respawn para manter Super Pulo
 player.CharacterAdded:Connect(function(char)
     local humanoid = char:WaitForChild("Humanoid")
     if superPuloAtivo and humanoid then
@@ -346,7 +301,6 @@ player.CharacterAdded:Connect(function(char)
     end
 end)
 
--- Toggle no Rayfield
 BrookhavenRPTab:CreateToggle({
     Name = "Ativar Super Pulo",
     CurrentValue = false,
@@ -354,13 +308,12 @@ BrookhavenRPTab:CreateToggle({
     Callback = atualizarSuperPulo
 })
 
--- Slider para ajustar a altura do pulo
 BrookhavenRPTab:CreateSlider({
    Name = "Altura do Pulo",
-   Range = {100, 1000}, -- mínimo 100, máximo 1000
+   Range = {100, 1000},
    Increment = 10,
    Suffix = "u/s",
-   CurrentValue = 150, -- valor inicial
+   CurrentValue = 150,
    Flag = "SliderJumpPower",
    Callback = function(Value)
        jumpPowerAtual = Value
@@ -371,16 +324,11 @@ BrookhavenRPTab:CreateSlider({
    end,
 })
 
--- ============================================================================
--- SISTEMA DE VELOCIDADE
--- ============================================================================
-
 local velocidadeAtiva = false
 local velocidadeEscolhida = 16
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
--- Função para obter humanoid de forma segura
 local function getHumanoidSafe()
     local character = player.Character
     if character then
@@ -389,9 +337,8 @@ local function getHumanoidSafe()
     return nil
 end
 
--- Função para aplicar velocidade quando personagem respawna
 local function aplicarVelocidadeNoRespawn()
-    wait(0.5) -- Aguarda um pouco para garantir que o personagem carregou
+    wait(0.5)
     local currentHumanoid = getHumanoidSafe()
     if currentHumanoid and velocidadeAtiva then
         currentHumanoid.WalkSpeed = velocidadeEscolhida
@@ -399,10 +346,8 @@ local function aplicarVelocidadeNoRespawn()
     end
 end
 
--- Conectar evento de respawn do personagem
 player.CharacterAdded:Connect(aplicarVelocidadeNoRespawn)
 
--- Toggle Velocidade
 BrookhavenRPTab:CreateToggle({
     Name = "Ativar Velocidade",
     CurrentValue = false,
@@ -427,7 +372,6 @@ BrookhavenRPTab:CreateToggle({
     end,
 })
 
--- Slider Velocidade
 BrookhavenRPTab:CreateSlider({
     Name = "Velocidade do Jogador",
     Range = {16, 1000},
@@ -448,37 +392,29 @@ BrookhavenRPTab:CreateSlider({
     end,
 })
 
--- ============================================================================
--- SISTEMA DE ESP
--- ============================================================================
-
 BrookhavenRPTab:CreateParagraph({
     Title = "ESP Otimizado - Brookhaven 🏡 RP",
     Content = "ESP otimizado com linhas conectoras e sem lag.\nVisualize jogadores e cofres de forma suave e eficiente."
 })
 
--- Configurações ESP
 local espAtivoPlayers = false
 local espAtivoCofres = false
 local corPlayer = Color3.fromRGB(0, 255, 0)
 local corCofre = Color3.fromRGB(255, 255, 0)
 local camera = workspace.CurrentCamera
 
--- Tabelas de ESP
 local playerHighlights = {}
 local cofreHighlights = {}
 local playerConnections = {}
 local updateTimer = 0
 local cofreUpdateTimer = 0
 
--- Função ESP Arsenal para JOGADORES (otimizada)
 local function createPlayerArsenalESP(targetPlayer)
     if not targetPlayer.Character or playerHighlights[targetPlayer] then return end
     
     local character = targetPlayer.Character
     local espObjects = {}
     
-    -- Highlight Arsenal para jogador
     local highlight = Instance.new("Highlight")
     highlight.Name = "PlayerArsenalESP"
     highlight.Adornee = character
@@ -490,7 +426,6 @@ local function createPlayerArsenalESP(targetPlayer)
     highlight.Parent = character
     table.insert(espObjects, highlight)
     
-    -- Billboard simplificado
     local head = character:FindFirstChild("Head")
     if head then
         local billboard = Instance.new("BillboardGui")
@@ -525,7 +460,6 @@ local function createPlayerArsenalESP(targetPlayer)
         
         table.insert(espObjects, billboard)
         
-        -- Atualização de distância otimizada
         spawn(function()
             while billboard.Parent and player.Character and targetPlayer.Character do
                 local hrp1 = player.Character:FindFirstChild("HumanoidRootPart")
@@ -535,12 +469,11 @@ local function createPlayerArsenalESP(targetPlayer)
                     distLabel.Text = dist .. "m"
                     distLabel.TextColor3 = corPlayer
                 end
-                wait(0.5) -- Atualiza a cada 0.5 segundos
+                wait(0.5)
             end
         end)
     end
     
-    -- Tracer otimizado
     pcall(function()
         local tracer = Drawing.new("Line")
         tracer.Visible = false
@@ -564,7 +497,7 @@ local function createPlayerArsenalESP(targetPlayer)
                         tracer.Visible = false
                     end
                 end
-                wait(0.1) -- Reduz frequência do tracer
+                wait(0.1)
             end
             if tracer then tracer:Remove() end
         end)
@@ -573,13 +506,11 @@ local function createPlayerArsenalESP(targetPlayer)
     playerHighlights[targetPlayer] = espObjects
 end
 
--- Função ESP Arsenal para COFRES (super otimizada)
 local function createCofreArsenalESP(cofre)
     if cofreHighlights[cofre] then return end
     
     local espObjects = {}
     
-    -- Highlight para cofre
     local highlight = Instance.new("Highlight")
     highlight.Name = "CofreESP"
     highlight.Adornee = cofre
@@ -591,7 +522,6 @@ local function createCofreArsenalESP(cofre)
     highlight.Parent = cofre
     table.insert(espObjects, highlight)
     
-    -- Billboard simplificado
     local billboard = Instance.new("BillboardGui")
     billboard.Name = "CofreInfo"
     billboard.Adornee = cofre
@@ -625,7 +555,6 @@ local function createCofreArsenalESP(cofre)
     
     table.insert(espObjects, billboard)
     
-    -- Tracer para cofre (mais otimizado)
     pcall(function()
         local tracer = Drawing.new("Line")
         tracer.Visible = false
@@ -646,13 +575,12 @@ local function createCofreArsenalESP(cofre)
                 else
                     tracer.Visible = false
                 end
-                wait(0.15) -- Menos frequente
+                wait(0.15)
             end
             if tracer then tracer:Remove() end
         end)
     end)
     
-    -- Atualizar distância (menos frequente)
     spawn(function()
         while billboard.Parent and player.Character do
             local hrp = player.Character:FindFirstChild("HumanoidRootPart")
@@ -661,14 +589,13 @@ local function createCofreArsenalESP(cofre)
                 distLabel.Text = dist .. "m"
                 distLabel.TextColor3 = corCofre
             end
-            wait(0.7) -- Atualiza menos frequentemente
+            wait(0.7)
         end
     end)
     
     cofreHighlights[cofre] = espObjects
 end
 
--- Aplicar ESP jogadores (otimizado)
 local function applyPlayerESP()
     for _, targetPlayer in pairs(Players:GetPlayers()) do
         if targetPlayer ~= player and targetPlayer.Character then
@@ -677,11 +604,10 @@ local function applyPlayerESP()
     end
 end
 
--- Aplicar ESP cofres (super otimizado)
 local function applyCofreESP()
     local found = 0
     for _, obj in pairs(workspace:GetDescendants()) do
-        if found >= 20 then break end -- Limite para evitar lag
+        if found >= 20 then break end
         if obj:IsA("BasePart") and obj.Name and 
            (obj.Name:lower():find("cofre") or obj.Name:lower():find("safe") or obj.Name:lower():find("chest")) then
             createCofreArsenalESP(obj)
@@ -690,7 +616,6 @@ local function applyCofreESP()
     end
 end
 
--- Remover ESP jogadores
 local function removePlayerESP()
     for targetPlayer, espObjs in pairs(playerHighlights) do
         for _, obj in pairs(espObjs) do
@@ -704,7 +629,6 @@ local function removePlayerESP()
     playerHighlights = {}
 end
 
--- Remover ESP cofres
 local function removeCofreESP()
     for cofre, espObjs in pairs(cofreHighlights) do
         for _, obj in pairs(espObjs) do
@@ -718,28 +642,24 @@ local function removeCofreESP()
     cofreHighlights = {}
 end
 
--- Loop principal super otimizado
 spawn(function()
     while true do
         local currentTime = tick()
         
-        -- Atualizar jogadores a cada 2 segundos
         if espAtivoPlayers and (currentTime - updateTimer) > 2 then
             applyPlayerESP()
             updateTimer = currentTime
         end
         
-        -- Atualizar cofres a cada 5 segundos
         if espAtivoCofres and (currentTime - cofreUpdateTimer) > 5 then
             applyCofreESP()
             cofreUpdateTimer = currentTime
         end
         
-        wait(1) -- Loop principal roda a cada 1 segundo
+        wait(1)
     end
 end)
 
--- Interface Rayfield limpa
 BrookhavenRPTab:CreateToggle({
     Name = "Ativar Esp Players",
     CurrentValue = false,
@@ -786,24 +706,21 @@ BrookhavenRPTab:CreateColorPicker({
     end
 })
 
--- Notificação
 Rayfield:Notify({
     Title = "ESP Otimizado Carregado",
     Content = "Sistema ESP sem lag ativado!",
     Duration = 3
 })
 
--- ============================================================================
--- SISTEMA DE ANTI-BAN
--- ============================================================================
 BrookhavenRPTab:CreateParagraph({
     Title = "Anti-Ban - Brookhaven 🏡 RP",
     Content = "Ative o sistema Anti-Ban para proteger seu personagem de kicks, barreiras suspeitas e quedas.\nUse o botão abaixo para ligar ou desligar a proteção e fique seguro enquanto joga."
 })
 
-
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
+local Lighting = game:GetService("Lighting")
+local SoundService = game:GetService("SoundService")
 local LocalPlayer = Players.LocalPlayer
 
 local antiBanAtivo = false
@@ -814,10 +731,8 @@ local characterProtected = false
 local antiKickEnabled = false
 local characterConnection = nil
 
--- Configurações de palavras-chave suspeitas
 local banTriggerWords = { "ban", "kick", "barrier", "block", "anti", "exploit" }
 
--- Proteção kick via metatable hook
 local function hookKick()
     if antiKickEnabled then return end
     antiKickEnabled = true
@@ -842,13 +757,12 @@ local function hookKick()
             end
         end
     end)
-    
+
     if not success then
         warn("[Anti-Ban]: Não foi possível ativar proteção contra Kick.")
     end
 end
 
--- Remove barreiras suspeitas
 local function removeBarrierParts()
     pcall(function()
         for _, obj in ipairs(Workspace:GetDescendants()) do
@@ -857,9 +771,7 @@ local function removeBarrierParts()
                 for _, word in ipairs(banTriggerWords) do
                     if lname:find(word) then
                         destroyedParts[obj] = true
-                        pcall(function()
-                            obj:Destroy()
-                        end)
+                        pcall(function() obj:Destroy() end)
                         warn("[Anti-Ban]: Removido objeto bloqueador: " .. obj.Name)
                         break
                     end
@@ -869,7 +781,6 @@ local function removeBarrierParts()
     end)
 end
 
--- Protege o personagem contra remoção de partes
 local function protectCharacter(character)
     if not character or characterProtected then return end
     characterProtected = true
@@ -887,7 +798,6 @@ local function protectCharacter(character)
     end)
 end
 
--- Restaura personagem se morrer ou cair
 local function restoreCharacter()
     if debounceRestore then return end
     debounceRestore = true
@@ -914,14 +824,13 @@ local function restoreCharacter()
     end)
 end
 
--- Monitora posição segura
 local function onCharacterAdded(character)
     if not character then return end
-    
+
     pcall(function()
         characterProtected = false
         protectCharacter(character)
-        
+
         local hrp = character:WaitForChild("HumanoidRootPart", 10)
         if hrp and lastSafePos then
             task.wait(0.5)
@@ -931,17 +840,12 @@ local function onCharacterAdded(character)
     end)
 end
 
--- Atualiza posição segura continuamente
 local safePositionLoop = nil
 local barrierRemovalLoop = nil
 
--- Função para iniciar loops
 local function startLoops()
-    -- Loop de posição segura
-    if safePositionLoop then
-        task.cancel(safePositionLoop)
-    end
-    
+    if safePositionLoop then task.cancel(safePositionLoop) end
+
     safePositionLoop = task.spawn(function()
         while antiBanAtivo do
             task.wait(1)
@@ -961,11 +865,8 @@ local function startLoops()
         end
     end)
 
-    -- Loop para remover barreiras
-    if barrierRemovalLoop then
-        task.cancel(barrierRemovalLoop)
-    end
-    
+    if barrierRemovalLoop then task.cancel(barrierRemovalLoop) end
+
     barrierRemovalLoop = task.spawn(function()
         while antiBanAtivo do
             task.wait(2)
@@ -976,7 +877,6 @@ local function startLoops()
     end)
 end
 
--- Função para parar loops
 local function stopLoops()
     if safePositionLoop then
         task.cancel(safePositionLoop)
@@ -988,7 +888,6 @@ local function stopLoops()
     end
 end
 
--- Toggle do Anti-Ban
 BrookhavenRPTab:CreateToggle({
     Name = "Ativar Anti-Ban",
     CurrentValue = false,
@@ -998,25 +897,20 @@ BrookhavenRPTab:CreateToggle({
             antiBanAtivo = Value
 
             if Value then
-                -- Ativa proteções
                 hookKick()
-                
-                -- Desconecta conexão anterior se existir
+
                 if characterConnection then
                     characterConnection:Disconnect()
                 end
-                
-                -- Se o personagem já existir, protege
+
                 if LocalPlayer.Character then
                     onCharacterAdded(LocalPlayer.Character)
                 end
 
-                -- Conecta evento de personagem adicionado
                 characterConnection = LocalPlayer.CharacterAdded:Connect(function(char)
                     onCharacterAdded(char)
                 end)
-                
-                -- Inicia loops de monitoramento
+
                 startLoops()
 
                 if Rayfield then
@@ -1027,18 +921,16 @@ BrookhavenRPTab:CreateToggle({
                         Image = 4483362458
                     })
                 end
-                
+
                 print("[Anti-Ban]: Sistema ativado com sucesso!")
-                
             else
-                -- Desativa proteções
                 stopLoops()
-                
+
                 if characterConnection then
                     characterConnection:Disconnect()
                     characterConnection = nil
                 end
-                
+
                 if Rayfield then
                     Rayfield:Notify({
                         Title = "Anti-Ban Desativado",
@@ -1047,60 +939,44 @@ BrookhavenRPTab:CreateToggle({
                         Image = 4483362458
                     })
                 end
-                
+
                 print("[Anti-Ban]: Sistema desativado.")
             end
         end)
     end
 })
 
--- ============================================================================
--- SISTEMA DE OTIMIZAÇÃO LEVE (mantém nomes/GUI)
--- ============================================================================
-local Workspace = game:GetService("Workspace")
-local Lighting = game:GetService("Lighting")
-local SoundService = game:GetService("SoundService")
-
 local function aplicarOtimizacaoLeve()
-    -- Configurações gráficas
     local settings = UserSettings():GetService("UserGameSettings")
     settings.SavedQualityLevel = Enum.SavedQualitySetting.QualityLevel1
     settings.MasterVolume = 0.2
 
-    -- Iluminação simples
     Lighting.Technology = Enum.Technology.Compatibility
     Lighting.GlobalShadows = false
     Lighting.Brightness = 1
     Lighting.EnvironmentDiffuseScale = 0
     Lighting.EnvironmentSpecularScale = 0
 
-    -- Remove apenas efeitos pesados do Lighting
     for _, effect in pairs(Lighting:GetChildren()) do
         if effect:IsA("PostEffect") or effect:IsA("Atmosphere") or effect:IsA("SunRaysEffect") then
             effect:Destroy()
         end
     end
 
-    -- Otimiza objetos no mapa
     for _, obj in pairs(Workspace:GetDescendants()) do
         if obj:IsA("BasePart") then
-            -- Material leve, mas mantém aparência básica
             obj.Material = Enum.Material.Plastic
             obj.CastShadow = false
         elseif obj:IsA("ParticleEmitter") or obj:IsA("Fire") or obj:IsA("Smoke") or obj:IsA("Trail") then
-            obj.Enabled = false -- só desativa em vez de destruir
+            obj.Enabled = false
         end
-        -- IMPORTANTE: NÃO remove Decal/Texture porque isso apaga nomes e detalhes
-        -- NÃO desativa SurfaceGui / BillboardGui porque isso apaga HUD e nomes
     end
 
-    -- Otimiza áudio
     SoundService.AmbientReverb = Enum.ReverbType.NoReverb
     SoundService.DopplerScale = 0
     SoundService.RolloffScale = 0.5
 end
 
--- UI direto no BrookhavenRPTab
 BrookhavenRPTab:CreateButton({
     Name = "Ativar Otimização",
     Callback = function()
