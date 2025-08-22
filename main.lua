@@ -52,7 +52,6 @@ local Window = Rayfield:CreateWindow({
    }
 })
 
---Aba Brookhavem
 local BrookhavenRPTab = Window:CreateTab("Brookhaven 🏡 RP", 4483362458)
 
 BrookhavenRPTab:CreateParagraph({
@@ -1077,7 +1076,6 @@ IniciacaoPTab:CreateToggle({
                     local intervalo = 1 / clicksPorSegundo
 
                     if tempoUltimoClick >= intervalo then
-                        -- Só clica se mouse estiver na tela e tiver espada equipada
                         if UserInputService:GetMouseLocation() and temEspadaEquipada() then
                             spawn(function()
                                 local ReplicatedStorage = game:GetService("ReplicatedStorage")
