@@ -992,3 +992,124 @@ BrookhavenRPTab:CreateButton({
         end
     end
 })
+
+local IniciacaoPTab = Window:CreateTab("Iniciação de Combate", 4483362458)
+IniciacaoPTab:CreateParagraph({
+    Title = "Script de Iniciação de Combate",
+    Content = "Combater Inimigos\nby rip_sheldoohz"
+})
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local velocidadeAtiva = false
+local velocidadeAtual = 16
+
+local function getHumanoid()
+    local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    return character:WaitForChild("Humanoid")
+end
+
+IniciacaoPTab:CreateToggle({
+    Name = "Ativar Velocidade",
+    CurrentValue = false,
+    Flag = "ToggleVelocidade",
+    Callback = function(Value)
+        velocidadeAtiva = Value
+        local humanoid = getHumanoid()
+        humanoid.WalkSpeed = Value and velocidadeAtual or 16
+    end,
+})
+
+IniciacaoPTab:CreateSlider({
+    Name = "Velocidade",
+    Range = {16, 1000},
+    Increment = 1,
+    Suffix = "WalkSpeed",
+    CurrentValue = 16,
+    Flag = "SliderVelocidade",
+    Callback = function(Value)
+        velocidadeAtual = Value
+        if velocidadeAtiva then
+            local humanoid = getHumanoid()
+            humanoid.WalkSpeed = velocidadeAtual
+        end
+    end,
+})
+
+local player = Players.LocalPlayer
+local mouse = player:GetMouse()
+
+local autoClickAtivo = false
+local clicksPorSegundo = 10
+
+local clickConnection
+local tempoUltimoClick = 0
+
+local function temEspadaEquipada()
+    local character = player.Character
+    if not character then return false end
+
+    local tool = character:FindFirstChildOfClass("Tool")
+    if tool and tool.Name:lower():find("sword") then
+        return true
+    end
+    return false
+end
+
+IniciacaoPTab:CreateToggle({
+    Name = "Ativar Auto Click",
+    CurrentValue = false,
+    Flag = "ToggleAutoClick",
+    Callback = function(Value)
+        autoClickAtivo = Value
+
+        if autoClickAtivo then
+            if clickConnection then
+                clickConnection:Disconnect()
+                clickConnection = nil
+            end
+
+            tempoUltimoClick = 0
+
+            clickConnection = RunService.Heartbeat:Connect(function(dt)
+                if autoClickAtivo then
+                    tempoUltimoClick = tempoUltimoClick + dt
+                    local intervalo = 1 / clicksPorSegundo
+
+                    if tempoUltimoClick >= intervalo then
+                        -- Só clica se mouse estiver na tela e tiver espada equipada
+                        if UserInputService:GetMouseLocation() and temEspadaEquipada() then
+                            spawn(function()
+                                local ReplicatedStorage = game:GetService("ReplicatedStorage")
+                                local eventoClick = ReplicatedStorage:FindFirstChild("ClickEvent")
+                                if eventoClick and eventoClick:IsA("RemoteEvent") then
+                                    eventoClick:FireServer()
+                                else
+                                    print("Evento ClickEvent não encontrado!")
+                                end
+                            end)
+                        end
+                        tempoUltimoClick = 0
+                    end
+                end
+            end)
+        else
+            if clickConnection then
+                clickConnection:Disconnect()
+                clickConnection = nil
+            end
+        end
+    end,
+})
+
+IniciacaoPTab:CreateSlider({
+    Name = "Clicks por Segundo",
+    Range = {10, 1000},
+    Increment = 1,
+    Suffix = "CPS",
+    CurrentValue = 10,
+    Flag = "SliderAutoClickCPS",
+    Callback = function(Value)
+        clicksPorSegundo = Value
+    end,
+})
