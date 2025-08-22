@@ -52,7 +52,8 @@ local Window = Rayfield:CreateWindow({
    }
 })
 
-local BrookhavenRPTab = Window:CreateTab("Brookhaven 🏡 RP")
+--Aba Brookhavem
+local BrookhavenRPTab = Window:CreateTab("Brookhaven 🏡 RP", 82560180002681)
 
 BrookhavenRPTab:CreateParagraph({
     Title = "Script Brookhaven 🏡 RP",
