@@ -148,7 +148,7 @@ BrookhavenRPTab:CreateToggle({
 
 BrookhavenRPTab:CreateSlider({
     Name = "Velocidade do Fly",
-    Range = {10, 5000},
+    Range = {10, 500},
     Increment = 10,
     Suffix = " u/s",
     CurrentValue = 100,
