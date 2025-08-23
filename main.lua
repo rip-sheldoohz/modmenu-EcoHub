@@ -59,6 +59,11 @@ MainMenuTab:CreateParagraph({
     Content = "Você está no painel principal do Eco Hub, um mod menu completo com diversos scripts atualizados e ferramentas avançadas para desenvolvedores. Criado e mantido por rip_sheldoohz. Use os botões acima para explorar as funções disponíveis."
 })
 
+MainMenuTab:CreateParagraph({
+    Title = "Mod Menu Eco Hub Atualizado",
+    Content = "Esta é a versão mais recente do Eco Hub, com todos os scripts e ferramentas atualizados. Desenvolvido por rip_sheldoohz. Nenhum conteúdo será exibido abaixo."
+})
+
 
 local BrookhavenRPTab = Window:CreateTab("Brookhaven 🏡 RP", 4483362458)
 BrookhavenRPTab:CreateParagraph({
