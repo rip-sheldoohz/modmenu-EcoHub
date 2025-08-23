@@ -52,8 +52,15 @@ local Window = Rayfield:CreateWindow({
    }
 })
 
-local BrookhavenRPTab = Window:CreateTab("Brookhaven 🏡 RP", 4483362458)
+local MainMenuTab = Window:CreateTab("Main Eco Hub", 4483362458)
 
+MainMenuTab:CreateParagraph({
+    Title = "Boas-Vindas | Mod Menu Eco Hub",
+    Content = "Você está no painel principal do Eco Hub, um mod menu completo com diversos scripts atualizados e ferramentas avançadas para desenvolvedores. Criado e mantido por rip_sheldoohz. Use os botões acima para explorar as funções disponíveis."
+})
+
+
+local BrookhavenRPTab = Window:CreateTab("Brookhaven 🏡 RP", 4483362458)
 BrookhavenRPTab:CreateParagraph({
     Title = "Script Brookhaven 🏡 RP",
     Content = "Use os botões abaixo para ativar as funções do Brookhaven"
